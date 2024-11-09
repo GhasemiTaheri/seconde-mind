@@ -280,3 +280,4 @@ easy_charge/media/
 .env
 #.envs/*
 .idea/
+test_main.http

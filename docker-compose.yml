@@ -1,0 +1,12 @@
+services:
+  db:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_db:/data
+    environment:
+      - MONGO_INITDB_DATABASE:seconde_mind
+volumes:
+  mongo_db:
+    driver: local
