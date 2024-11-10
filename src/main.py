@@ -23,4 +23,4 @@ app = FastAPI(
 
 app.include_router(auth_router)
 app.include_router(user_router)
-# app.include_router(note_router)
+app.include_router(note_router)

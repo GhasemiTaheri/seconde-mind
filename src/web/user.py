@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, status, HTTPException
 
 from utils.dependencies import get_current_active_user
@@ -22,6 +24,6 @@ async def create_user(user_in: CreateUser):
 
 
 @router.get("/me", response_model=PublicUser, status_code=status.HTTP_200_OK)
-async def get_current_user(user: User = Depends(get_current_active_user)):
+async def get_current_user(user: Annotated[User, Depends(get_current_active_user)]):
     """Get current active user details."""
     return user
