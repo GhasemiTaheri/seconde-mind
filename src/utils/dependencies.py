@@ -1,13 +1,13 @@
-from typing import Optional, cast
+from typing import Optional, cast, Annotated
 
 from beanie import PydanticObjectId
-from fastapi import Depends, status
+from fastapi import Depends, status, Path
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
 
-from model import AuthTokenPayload, User
+from model import AuthTokenPayload, User, Note
 from config import settings
 
 bearer_token = OAuth2PasswordBearer(
@@ -61,3 +61,15 @@ def get_current_active_user(current_user: User = Depends(get_current_user)) -> U
             detail="Inactive user",
         )
     return current_user
+
+
+async def get_note(note_id: Annotated[PydanticObjectId, Path(title="Note id")],
+                   user: Annotated[User, Depends(get_current_active_user)]):
+    note = await Note.find_one(Note.id == note_id, Note.user == str(user.id))
+    if not note:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Does not exist",
+        )
+
+    return note
