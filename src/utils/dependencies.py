@@ -64,7 +64,7 @@ def get_current_active_user(current_user: User = Depends(get_current_user)) -> U
 
 
 async def get_note(note_id: Annotated[PydanticObjectId, Path(title="Note id")],
-                   user: Annotated[User, Depends(get_current_active_user)]):
+                   user: Annotated[User, Depends(get_current_active_user)]) -> Note:
     note = await Note.find_one(Note.id == note_id, Note.user == str(user.id))
     if not note:
         raise HTTPException(
