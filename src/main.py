@@ -24,3 +24,15 @@ app = FastAPI(
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(note_router)
+
+# Set all CORS enabled origins
+if settings.CORS_ORIGINS:
+    from fastapi.middleware.cors import CORSMiddleware
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.CORS_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )

@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     # Algorithm used to generate the JWT token
     JWT_ALGORITHM: str = "HS256"
     # CORS_ORIGINS is a JSON-formatted list of origins
+    # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000"]'
     CORS_ORIGINS: List[str] = []
-    USE_CORRELATION_ID: bool = True
 
     UVICORN_HOST: str
     UVICORN_PORT: int
