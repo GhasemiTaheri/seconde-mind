@@ -1,10 +1,8 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Query, Depends, Body
-from starlette import status
+from fastapi import APIRouter, Query, Depends, Body, status
 
-from model import User, PublicNote, CreateNote
-from model.note import Note
+from model import User, Note, PublicNote, CreateNote
 from utils.dependencies import get_current_active_user, get_note
 
 router = APIRouter(prefix="/note", tags=["note"])
@@ -15,13 +13,17 @@ router = APIRouter(prefix="/note", tags=["note"])
             response_model=list[PublicNote],
             summary="Get list of notes")
 async def note_list(user: Annotated[User, Depends(get_current_active_user)],
-                    title: Annotated[
-                        str | None,
-                        Query(
-                            title="Note title",
-                            description="This parameter is used to find notes"),
+                    title: Annotated[str | None,
+                    Query(title="Note title",
+                          description="This parameter is used to find notes"),
                     ] = None):
-    return await Note.user_note_list(user_id=str(user.id))
+    if title:
+        return await Note.find({
+            "user": str(user.id),
+            "title": {'$regex': f".*{title}.*"}
+        }).to_list()
+    else:
+        return await Note.find(Note.user == str(user.id)).to_list()
 
 
 @router.post(path="/",
@@ -29,8 +31,8 @@ async def note_list(user: Annotated[User, Depends(get_current_active_user)],
              response_model=PublicNote,
              summary="Create a new note")
 async def create_note(user: Annotated[User, Depends(get_current_active_user)],
-                      note_in: CreateNote):
-    data = note_in.dict()
+                      new_note: CreateNote):
+    data = new_note.dict()
     data['user'] = str(user.id)
     return await Note(**data).insert()
 

@@ -11,9 +11,9 @@ class Note(Document):
     user: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-    @classmethod
-    async def user_note_list(cls, *, user_id: str) -> Optional["Note"]:
-        return await cls.find(cls.user == user_id).to_list()
+    class Settings:
+        name = 'notes'
+        use_state_management = True
 
 
 class PublicNote(BaseModel):

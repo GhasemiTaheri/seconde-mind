@@ -3,7 +3,6 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from config import settings
 from model import User, Note
-from utils.security import get_password_hash
 
 
 async def init() -> None:
@@ -15,10 +14,3 @@ async def init() -> None:
             Note
         ],
     )
-    if not await User.get_by_username(username=settings.FIRST_SUPERUSER):
-        await User(
-            username=settings.FIRST_SUPERUSER,
-            email=settings.FIRST_SUPERUSER_EMAIL,
-            hashed_password=get_password_hash(settings.FIRST_SUPERUSER_PASSWORD),
-            is_superuser=True,
-        ).insert()

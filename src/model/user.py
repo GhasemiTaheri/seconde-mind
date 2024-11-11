@@ -21,10 +21,6 @@ class User(Document):
         return await cls.find_one(cls.username == username.lower())
 
     @classmethod
-    async def get_by_api_key(cls, *, api_key: str) -> Optional["User"]:
-        return await cls.find_one(cls.api_key == api_key.lower())
-
-    @classmethod
     async def authenticate(
             cls,
             *,
