@@ -2,28 +2,35 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query, Depends, Body, status
 
-from model import User, Note, PublicNote, CreateNote
+from model import User, Note, PublicNote, CreateNote, PaginatedResponse
 from utils.dependencies import get_current_active_user, get_note
 
 router = APIRouter(prefix="/note", tags=["note"])
 
 
 @router.get(path="/",
+            response_model=PaginatedResponse,
             status_code=status.HTTP_200_OK,
-            response_model=list[PublicNote],
             summary="Get list of notes")
 async def note_list(user: Annotated[User, Depends(get_current_active_user)],
+                    size: int = 10,
+                    offset: int = 0,
                     title: Annotated[str | None,
                     Query(title="Note title",
                           description="This parameter is used to find notes"),
                     ] = None):
     if title:
-        return await Note.find({
+        result = Note.find({
             "user": str(user.id),
             "title": {'$regex': f".*{title}.*"}
-        }).to_list()
+        })
     else:
-        return await Note.find(Note.user == str(user.id)).to_list()
+        result = Note.find(Note.user == str(user.id))
+
+    return {
+        "total": await result.count(),
+        "results": await result.skip(offset).limit(size).to_list()
+    }
 
 
 @router.post(path="/",
