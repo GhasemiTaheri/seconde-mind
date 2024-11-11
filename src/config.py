@@ -20,9 +20,6 @@ class Settings(BaseSettings):
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000"]'
     CORS_ORIGINS: List[str] = []
 
-    UVICORN_HOST: str
-    UVICORN_PORT: int
-
     # MongoDB
     MONGODB_URI: str = "mongodb://localhost:27017/"
     MONGODB_DB_NAME: str = "seconde_mind"
